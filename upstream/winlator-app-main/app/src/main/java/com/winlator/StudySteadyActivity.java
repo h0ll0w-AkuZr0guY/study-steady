@@ -170,7 +170,9 @@ public class StudySteadyActivity extends AppCompatActivity {
             if(selected.getName().contains("\""))throw new IOException("EXE 名称含引号，请修改文件名");
             String drives="";for(Drive drive:container.drivesIterator())if(!drive.letter.equalsIgnoreCase("L")&&!drive.letter.equalsIgnoreCase("M"))drives+=drive.letter+":"+drive.path;
             container.setDrives(drives+"L:"+selected.getParentFile().getAbsolutePath()+"M:"+dir.getAbsolutePath());container.saveData();
-            String path="L:\\"+selected.getName(),work=g.optString("work","launcher").equals("root")?"M:\\":"L:\\";
+            String dosRoot="C:\\"+g.optString("directory").replace('/','\\');
+            String path=dosRoot+"\\"+relative.replace('/','\\');
+            String work=g.optString("work","launcher").equals("root")?dosRoot:path.substring(0,path.lastIndexOf('\\'));
             File handoff=new File(container.getRootDir(),".wine/drive_c/StudyLauncher/"+g.optString("id")+".launch");handoff.getParentFile().mkdirs();
             try(OutputStream out=new FileOutputStream(handoff)){out.write(("\ufeff"+work+"\0"+path+"\0").getBytes(java.nio.charset.StandardCharsets.UTF_16LE));}
             File desktop=new File(container.getUserDir(),"Desktop");desktop.mkdirs();File entry=new File(desktop,"Study-"+g.optString("id")+".desktop");

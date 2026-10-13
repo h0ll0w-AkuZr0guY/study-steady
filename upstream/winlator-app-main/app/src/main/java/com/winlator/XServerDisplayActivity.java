@@ -518,9 +518,14 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             if (container.getHUDMode() == FrameRating.Mode.FULL.ordinal()) envVars.put("X11_WND_GPU_INFO", "1");
 
             boolean studyShell = shortcut != null && shortcut.getExtra("studyShell", "0").equals("1");
-            String desktopName = shortcut != null || getIntent().hasExtra("exec_path") ? "nogui" : "shell";
+            String desktopName = studyShell ? "shell" : shortcut != null || getIntent().hasExtra("exec_path") ? "nogui" : "shell";
             String guestExecutable = "wine explorer /desktop="+desktopName+","+xServer.screenInfo+" "+getWineStartCommand();
             guestProgramLauncherComponent.setGuestExecutable(guestExecutable);
+            if(studyShell) {
+                // Boot the same desktop path used by manual launch before handing off the game.
+                String handoff=shortcut.getExtra("studyLaunchConfig");
+                AppUtils.runDelayed(()->winHandler.exec("C:\\windows\\study-launch.exe", "\""+handoff+"\""),1500);
+            }
 
             envVars.putAll(container.getEnvVars());
             if (shortcut != null) envVars.putAll(shortcut.getExtra("envVars"));
@@ -962,7 +967,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
     private String getWineStartCommand() {
         if(shortcut!=null && !shortcut.getExtra("studyLaunchConfig").isEmpty()) {
-            return "C:\\windows\\winhandler.exe /dir C:\\\\windows \"study-launch.exe\" \""+shortcut.getExtra("studyLaunchConfig")+"\"";
+            return "C:\\windows\\winhandler.exe /dir C:\\\\windows \"wfm.exe\"";
         }
         String cmdArgs = "";
         String execPath = null;
