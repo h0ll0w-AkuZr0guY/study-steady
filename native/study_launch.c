@@ -30,12 +30,13 @@ int WINAPI wWinMain(HINSTANCE h,HINSTANCE prev,LPWSTR args,int show) {
     WCHAR *command=(WCHAR*)HeapAlloc(GetProcessHeap(),HEAP_ZERO_MEMORY,(length+3)*sizeof(WCHAR));
     if(!command){HeapFree(GetProcessHeap(),0,data);return 8;}
     command[0]='"';lstrcpyW(command+1,exe);command[length+1]='"';
-    STARTUPINFOW startup={0};PROCESS_INFORMATION process={0};startup.cb=sizeof(startup);startup.dwFlags=STARTF_USESHOWWINDOW;startup.wShowWindow=SW_SHOW;
+    SHELLEXECUTEINFOW launch={0};launch.cbSize=sizeof(launch);launch.fMask=SEE_MASK_NOCLOSEPROCESS|SEE_MASK_NOASYNC;launch.lpVerb=L"open";launch.lpFile=exe;launch.lpDirectory=work;launch.nShow=SW_SHOWNORMAL;
     AllowSetForegroundWindow(ASFW_ANY);
-    ok=CreateProcessW(exe,command,NULL,NULL,FALSE,0,NULL,work,&startup,&process);
+    ok=ShellExecuteExW(&launch);
     DWORD error=GetLastError();HeapFree(GetProcessHeap(),0,command);HeapFree(GetProcessHeap(),0,data);
     if(!ok){WCHAR message[160];wsprintfW(message,L"Cannot start selected EXE. Windows error: %lu",error);MessageBoxW(NULL,message,L"Study Steady",MB_OK|MB_ICONERROR);return 9;}
-    CloseHandle(process.hThread);AllowSetForegroundWindow(process.dwProcessId);WaitForInputIdle(process.hProcess,10000);
-    EnumWindows(focus_window,(LPARAM)process.dwProcessId);
-    WaitForSingleObject(process.hProcess,INFINITE);DWORD code=0;GetExitCodeProcess(process.hProcess,&code);CloseHandle(process.hProcess);return (int)code;
+    if(!launch.hProcess)return 0;
+    DWORD pid=GetProcessId(launch.hProcess);AllowSetForegroundWindow(pid);WaitForInputIdle(launch.hProcess,10000);
+    EnumWindows(focus_window,(LPARAM)pid);
+    WaitForSingleObject(launch.hProcess,INFINITE);DWORD code=0;GetExitCodeProcess(launch.hProcess,&code);CloseHandle(launch.hProcess);return (int)code;
 }

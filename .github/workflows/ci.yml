@@ -30,6 +30,8 @@ jobs:
           sudo apt-get install -y gcc-mingw-w64-x86-64
           python tools/build_native.py
       - name: Install Android build dependencies
+        uses: android-actions/setup-android@v3
+      - name: Install Android SDK platform
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
       - name: Prepare pinned runtime
         run: python prepare_build.py
