@@ -40,7 +40,7 @@ public final class GameLibrary {
         if(find("study-steady")!=null || !new File(root,".wine/drive_c/StudySteady/ststeady_patch.exe").isFile())return null;
         try {
             JSONObject g=new JSONObject().put("id","study-steady").put("name","Study Steady")
-                .put("directory","StudySteady").put("exe",exe).put("work",launcherWork?"launcher":"root").put("controls",true);
+                .put("directory","StudySteady").put("exe",exe).put("work",launcherWork?"launcher":"root").put("controls",false);
             entries.add(g); save(); return g;
         }catch(JSONException e){throw new IOException(e);}
     }
@@ -80,7 +80,7 @@ public final class GameLibrary {
             if(!stage.renameTo(destination))throw new IOException("无法提交导入目录");
             try {
                 JSONObject g=new JSONObject().put("id",id).put("name",name).put("directory","Games/"+id)
-                    .put("exe",preferred).put("work","launcher").put("controls",true).put("bytes",total);
+                    .put("exe",preferred).put("work","launcher").put("controls",false).put("bytes",total);
                 entries.add(g);
                 try { save(); } catch(IOException e){entries.remove(g); destination.renameTo(stage); throw e;}
                 committed=true; return g;

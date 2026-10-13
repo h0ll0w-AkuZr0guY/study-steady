@@ -2,7 +2,7 @@
 
 依赖 Python 3.10+、JDK 21、Android SDK platform 36 / build-tools 36.0.0。Gradle 8.14.3 / Android Gradle Plugin 8.13.2 由 wrapper 与脚本固定。首次依赖下载需要网络。
 
-仓库保留应用 Java/C++ 源码、资源和运行环境压缩包；`prepare_build.py` 首次从官方 Winlator 11.2 Release 下载 APK，验证 SHA-256，然后提取 ARM64 原生库。它不获取任何商业游戏。固定身份见第三方声明。
+仓库保留应用 Java/C++ 源码、资源定义及运行资源散列清单；`prepare_build.py` 首次从官方 Winlator 11.2 Release 下载 APK，验证 SHA-256，然后提取 ARM64 原生库，同时从固定源码提交获取并逐一校验运行资源。它不获取任何商业游戏。固定身份见第三方声明。
 
 ```powershell
 $env:JAVA_HOME = '<JDK 21 路径>'
@@ -22,7 +22,7 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 ## Unicode 启动助手
 
-原组件使用 ANSI 启动接口，本项目的 `native/study_launch.c` 使用 CreateProcessW。Java 将工作目录和 EXE 路径以 UTF-16LE 写入私有交接文件，助手直接读取，不执行 shell 脚本。
+原组件使用 ANSI 启动接口，本项目的 `native/study_launch.c` 使用 ShellExecuteExW。Java 将工作目录和 EXE 路径以 UTF-16LE 写入私有交接文件，助手直接读取，不执行 shell 脚本。
 
 已附带编译的 study-launch.exe；用 MinGW-w64 重新构建：
 

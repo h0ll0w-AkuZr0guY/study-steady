@@ -117,6 +117,8 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     private FrameRating frameRating;
     private Runnable editInputControlsCallback;
     private Shortcut shortcut;
+    private Shortcut studyShortcut;
+    private boolean studyLaunchDispatched;
     private String[] graphicsDriver = {GraphicsDrivers.DEFAULT_VULKAN_DRIVER, GraphicsDrivers.DEFAULT_OPENGL_DRIVER};
     private String audioDriver = Container.DEFAULT_AUDIO_DRIVER;
     private String dxwrapper = Container.DEFAULT_DXWRAPPER;
@@ -198,6 +200,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
 
             String shortcutPath = getIntent().getStringExtra("shortcut_path");
             if (shortcutPath != null && !shortcutPath.isEmpty()) shortcut = new Shortcut(container, new File(shortcutPath));
+            if(shortcut!=null&&shortcut.getExtra("studyShell","0").equals("1")){studyShortcut=shortcut;shortcut=null;}
 
             String graphicsDriver = container.getGraphicsDriver();
             audioDriver = container.getAudioDriver();
@@ -239,8 +242,7 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         inputControlsManager = new InputControlsManager(this);
         xServer = new XServer(this, screenInfo);
         xServer.setWinHandler(winHandler);
-        final boolean studyShell = shortcut != null && shortcut.getExtra("studyShell", "0").equals("1");
-        final boolean[] flags = {false, !studyShell && (shortcut != null || getIntent().hasExtra("exec_path"))};
+        final boolean[] flags = {false, shortcut != null || getIntent().hasExtra("exec_path")};
         xServer.windowManager.addOnWindowModificationListener(new WindowManager.OnWindowModificationListener() {
             @Override
             public void onUpdateWindowContent(Window window) {
@@ -254,6 +256,21 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
                     xServerView.getRenderer().setCursorVisible(true);
                     preloaderDialog.closeOnUiThread();
                     flags[0] = true;
+                }
+
+                if (studyShortcut != null && !studyLaunchDispatched && window.isRenderable()
+                        && window.getClassName().equalsIgnoreCase("wfm.exe")) {
+                    studyLaunchDispatched = true;
+                    String handoff = studyShortcut.getExtra("studyLaunchConfig");
+                    // Activate the interactive desktop before the Unicode handoff.
+                    // Wait for its mapped window rather than guessing cold-boot duration.
+                    AppUtils.runDelayed(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        xServer.injectPointerMove(xServer.screenInfo.width / 2, xServer.screenInfo.height / 2);
+                        xServer.injectPointerButtonPress(com.winlator.xserver.Pointer.Button.BUTTON_LEFT);
+                        xServer.injectPointerButtonRelease(com.winlator.xserver.Pointer.Button.BUTTON_LEFT);
+                        winHandler.exec("C:\\windows\\study-launch.exe", "\"" + handoff + "\"");
+                    }, 1000);
                 }
 
                 if (flags[1] && window.attributes.isViewable() && window.isDesktopWindow()) {
@@ -517,21 +534,16 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         if (container != null) {
             if (container.getHUDMode() == FrameRating.Mode.FULL.ordinal()) envVars.put("X11_WND_GPU_INFO", "1");
 
-            boolean studyShell = shortcut != null && shortcut.getExtra("studyShell", "0").equals("1");
-            String desktopName = studyShell ? "shell" : shortcut != null || getIntent().hasExtra("exec_path") ? "nogui" : "shell";
+            String desktopName = shortcut != null || getIntent().hasExtra("exec_path") ? "nogui" : "shell";
             String guestExecutable = "wine explorer /desktop="+desktopName+","+xServer.screenInfo+" "+getWineStartCommand();
             guestProgramLauncherComponent.setGuestExecutable(guestExecutable);
-            if(studyShell) {
-                // Boot the same desktop path used by manual launch before handing off the game.
-                String handoff=shortcut.getExtra("studyLaunchConfig");
-                AppUtils.runDelayed(()->winHandler.exec("C:\\windows\\study-launch.exe", "\""+handoff+"\""),1500);
-            }
 
             envVars.putAll(container.getEnvVars());
             if (shortcut != null) envVars.putAll(shortcut.getExtra("envVars"));
             if (!envVars.has("WINEESYNC")) envVars.put("WINEESYNC", "1");
 
             guestProgramLauncherComponent.setBox64Preset(shortcut != null ? shortcut.getExtra("box64Preset", container.getBox64Preset()) : container.getBox64Preset());
+            if(studyShortcut!=null&&!studyShortcut.getExtra("box64Preset").isEmpty())guestProgramLauncherComponent.setBox64Preset(studyShortcut.getExtra("box64Preset"));
         }
 
         environment = new XEnvironment(this, rootFS);
@@ -599,7 +611,8 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
         renderer.setCursorVisible(false);
         renderer.setCursorColor(preferences.getInt("cursor_color", 0xffffff));
         renderer.setCursorScale(preferences.getFloat("cursor_scale", 1.0f));
-        renderer.setForceWindowsFullscreen(shortcut != null && shortcut.getExtra("forceFullscreen", "0").equals("1"));
+        Shortcut displayShortcut = studyShortcut != null ? studyShortcut : shortcut;
+        renderer.setForceWindowsFullscreen(displayShortcut != null && displayShortcut.getExtra("forceFullscreen", "0").equals("1"));
 
         xServer.setRenderer(renderer);
         rootView.addView(xServerView);
@@ -632,8 +645,9 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
             rootView.addView(frameRating);
         }
 
-        if (shortcut != null) {
-            String controlsProfile = shortcut.getExtra("controlsProfile");
+        Shortcut inputShortcut=studyShortcut!=null?studyShortcut:shortcut;
+        if (inputShortcut != null) {
+            String controlsProfile = inputShortcut.getExtra("controlsProfile");
             if (!controlsProfile.isEmpty()) {
                 ControlsProfile profile = inputControlsManager.getProfile(Integer.parseInt(controlsProfile));
                 if (profile != null) showInputControls(profile);
@@ -966,9 +980,6 @@ public class XServerDisplayActivity extends AppCompatActivity implements Navigat
     }
 
     private String getWineStartCommand() {
-        if(shortcut!=null && !shortcut.getExtra("studyLaunchConfig").isEmpty()) {
-            return "C:\\windows\\winhandler.exe /dir C:\\\\windows \"wfm.exe\"";
-        }
         String cmdArgs = "";
         String execPath = null;
         String execArgs = "";

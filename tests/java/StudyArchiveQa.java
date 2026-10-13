@@ -44,6 +44,20 @@ public class StudyArchiveQa {
   File rollback=root();put(rollback,".wine/user.reg","original");new File(rollback,".wine/system.reg").mkdir();Map<String,byte[]> rf=new LinkedHashMap<>();rf.put(".wine/user.reg","new".getBytes("UTF-8"));rf.put(".wine/system.reg","new2".getBytes("UTF-8"));rejects(()->StudyArchive.restore(new ByteArrayInputStream(zip(rf,true,manifest(rf,true))),rollback,null),"restore commit failure");ok(get(rollback,".wine/user.reg").equals("original"),"rollback restored original");ok(!new File(rollback,".StudySteady-restore").exists(),"rollback staging cleaned");
   Map<String,byte[]> escape=new LinkedHashMap<>();escape.put(".wine/drive_c/StudySteady/ststeady_patch.exe",new byte[]{8});rejects(()->StudyArchive.restore(new ByteArrayInputStream(zip(escape,true,manifest(escape,true))),saves,null),"restore executable escape");
   JSONObject large=new JSONObject(new String(manifest(game(),false),"UTF-8"));large.getJSONArray("files").getJSONObject(2).put("size",5000000000L);large.put("totalBytes",5000000005L);java.lang.reflect.Method read=StudyArchive.class.getDeclaredMethod("readManifest",byte[].class,boolean.class);read.setAccessible(true);Object result=read.invoke(null,large.toString().getBytes("UTF-8"),false);java.lang.reflect.Field total=result.getClass().getDeclaredField("total");total.setAccessible(true);ok(total.getLong(result)==5000000005L,"64-bit manifest sizes");
+  File multi=root();String generic=".wine/drive_c/Games/g0123456789abcdef0123456789abcdef/中文游戏/";
+  put(multi,generic+"engine/saves/slot01.bin","nested-slot");
+  put(multi,generic+"data/quick.sav","quick-slot");
+  put(multi,generic+"options.ini","options");
+  put(multi,generic+"game.exe","game-binary");
+  put(multi,".wine/drive_c/StudySteady/buding/hanhuabuding/savedata/00001","legacy-nested");
+  ByteArrayOutputStream multiOut=new ByteArrayOutputStream();StudyArchive.backup(multi,multiOut,null);
+  Set<String> multiNames=new HashSet<>();try(ZipInputStream z=new ZipInputStream(new ByteArrayInputStream(multiOut.toByteArray()))){ZipEntry e;while((e=z.getNextEntry())!=null)multiNames.add(e.getName());}
+  ok(multiNames.contains(generic+"engine/saves/slot01.bin")&&multiNames.contains(generic+"data/quick.sav")&&multiNames.contains(generic+"options.ini")&&!multiNames.contains(generic+"game.exe"),"generic nested game save scope");
+  ok(multiNames.contains(".wine/drive_c/StudySteady/buding/hanhuabuding/savedata/00001"),"legacy nested translation saves");
+  put(multi,generic+"engine/saves/slot01.bin","changed");StudyArchive.restore(new ByteArrayInputStream(multiOut.toByteArray()),multi,null);
+  ok(get(multi,generic+"engine/saves/slot01.bin").equals("nested-slot")&&get(multi,generic+"game.exe").equals("game-binary"),"generic save restore preserves game executable");
+  Map<String,byte[]> invalidGame=new LinkedHashMap<>();invalidGame.put(".wine/drive_c/Games/arbitrary/save/slot.dat",new byte[]{1});
+  rejects(()->StudyArchive.restore(new ByteArrayInputStream(zip(invalidGame,true,manifest(invalidGame,true))),multi,null),"restore outside imported UUID directory");
   System.out.println("TOTAL "+passed+" checks passed");
  }
 }

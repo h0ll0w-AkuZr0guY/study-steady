@@ -100,7 +100,8 @@ public class StudySteadyActivity extends AppCompatActivity {
         }
         ContainerManager manager=new ContainerManager(this);container=manager.getContainerById(prefs.getInt("study_container_id",0));
         if(container==null) {
-            JSONObject data=new JSONObject().put("name","Study Steady").put("screenSize","1280x720").put("graphicsDriver",GraphicsDrivers.getDefaultDriver(this)).put("dxwrapper","dxvk")
+            String driver=GraphicsDrivers.getDefaultDriver(this);if(driver.startsWith("turnip"))driver="turnip,zink";
+            JSONObject data=new JSONObject().put("name","Study Steady").put("screenSize","1280x720").put("graphicsDriver",driver).put("dxwrapper","dxvk")
                 .put("box64Preset",Box64Preset.INTERMEDIATE).put("wincomponents",Container.DEFAULT_WINCOMPONENTS).put("envVars",Container.DEFAULT_ENV_VARS+" LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8")
                 .put("extraData",new JSONObject().put("appVersion",AppUtils.getVersionCode(this)));
             CountDownLatch done=new CountDownLatch(1);runOnUiThread(()->manager.createContainerAsync(data,c->{container=c;done.countDown();}));done.await();
@@ -111,6 +112,10 @@ public class StudySteadyActivity extends AppCompatActivity {
         File helper=new File(container.getRootDir(),".wine/drive_c/windows/study-launch.exe");
         try(InputStream in=getAssets().open("study/study-launch.exe");OutputStream out=new FileOutputStream(helper)){byte[] b=new byte[32768];int n;while((n=in.read(b))!=-1)out.write(b,0,n);}
         if(!prefs.getBoolean("study_library_migrated",false))library.registerLegacy(prefs.getString("study_exe","ststeady_patch.exe"),prefs.getBoolean("study_work_launcher",false));
+        if(!prefs.getBoolean("study_plain_touch_default",false)) {
+            for(JSONObject g:library.entries)g.put("controls",false);
+            library.save();prefs.edit().putBoolean("study_plain_touch_default",true).apply();
+        }
         prefs.edit().putBoolean("study_library_migrated",true).apply();
     }
     private void installFont() throws IOException {
@@ -177,7 +182,7 @@ public class StudySteadyActivity extends AppCompatActivity {
             try(OutputStream out=new FileOutputStream(handoff)){out.write(("\ufeff"+work+"\0"+path+"\0").getBytes(java.nio.charset.StandardCharsets.UTF_16LE));}
             File desktop=new File(container.getUserDir(),"Desktop");desktop.mkdirs();File entry=new File(desktop,"Study-"+g.optString("id")+".desktop");
             String extras="studyShell=1\nstudyLaunchConfig=C:\\StudyLauncher\\"+g.optString("id")+".launch\nstudyWorkingDir="+work+"\nforceFullscreen="+(g.optBoolean("fullscreen",false)?"1":"0")+"\n";
-            if(g.optBoolean("controls",true))extras+="controlsProfile=99\n";if(!g.optString("box64").isEmpty())extras+="box64Preset="+g.optString("box64")+"\n";
+            if(g.optBoolean("controls",false))extras+="controlsProfile=99\n";if(!g.optString("box64").isEmpty())extras+="box64Preset="+g.optString("box64")+"\n";
             FileUtils.writeString(entry,"[Desktop Entry]\nName=Study Steady\nType=Application\nExec=wine "+StringUtils.escapeDOSPath(StringUtils.escapeDOSPath(path))+"\n[Extra Data]\n"+extras);
             if(!new Shortcut(container,entry).path.equals(path))throw new IOException("启动路径校验失败");
             startActivity(new Intent(this,XServerDisplayActivity.class).putExtra("container_id",container.id).putExtra("shortcut_path",entry.getPath()));

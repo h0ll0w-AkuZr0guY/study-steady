@@ -1,6 +1,6 @@
 # 第三方组件与来源记录
 
-本项目是为个人本地使用开发的 Study Steady Android 启动器，基于 Winlator 修改，属于非官方构建。记录日期：2026-10-13。
+本项目是面向用户自备 PC Galgame 的 Study Steady Android 启动器，基于 Winlator 修改，属于非官方构建。记录日期：2026-10-14。
 
 ## 核心组件
 
