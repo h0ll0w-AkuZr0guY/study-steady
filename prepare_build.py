@@ -58,6 +58,7 @@ with zipfile.ZipFile(APK) as archive:
             if 'libzstd-jni' in info.filename:
                 continue  # Supplied by the matching AAR dependency.
             target = APP / 'app/src/main/jniLibs/arm64-v8a' / Path(info.filename).name
+            target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(archive.read(info))
 
 (APP / 'app/build.gradle').write_text('''apply plugin: 'com.android.application'
