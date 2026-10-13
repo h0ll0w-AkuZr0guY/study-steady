@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "3981d86efa4f333b2a34a7da8b6521476cd8c8b9",
+  "files": [
+    {
+      "path": "app/src/main/assets/box64/box64-0.4.4.tzst",
+      "size": 4540371,
+      "sha256": "e1a34fed50bb38ef7fbf51ad5e5b9a76ec4c8178f9cfb4b9f6def0497f2f446c"
+    },
+    {
+      "path": "app/src/main/assets/container_pattern.tzst",
+      "size": 7399363,
+      "sha256": "8ae3a4fee33e86da26826395650bb07c6f49ce94629ea4b9442bc633b6b8ca33"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/cnc-ddraw-6.6/ddraw.tzst",
+      "size": 166133,
+      "sha256": "eabb2d59ce7060767996d0c9597ee8772059126a3af01698e59a5e7905e49867"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/d7vk-1.11.tzst",
+      "size": 2839791,
+      "sha256": "c737c5ec4c6d4bbbad4e9eafdcc22efda34ae4c274713b40246b3a5fb472c05d"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/d8vk-1.0.tzst",
+      "size": 1851455,
+      "sha256": "da30a104f83f619214a3bc67c971434837e1a11ca30703d0f79041a93f2be246"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/dxvk-1.10.3.tzst",
+      "size": 3554248,
+      "sha256": "18ed7c263e0d52c4bbd0e7345b4f22908c10966f37d7d6d80c639ec45123075a"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/dxvk-2.4.1.tzst",
+      "size": 4322727,
+      "sha256": "897cc48500241006c15c62f200e9a6e1ea8a674bd285da25df6f68fdcdbfe42e"
+    },
+    {
+      "path": "app/src/main/assets/dxwrapper/vkd3d-2.14.1.tzst",
+      "size": 2359119,
+      "sha256": "354b43b84df136683c7ad9cb80e125b4a357de7459fab9ac8b56d5fe4a617687"
+    },
+    {
+      "path": "app/src/main/assets/graphics_driver/gladio-1.1.tzst",
+      "size": 107293,
+      "sha256": "925a492ca58d4670271aabe6c6aaeef0df1e22932955025afb3fe23f26442ac3"
+    },
+    {
+      "path": "app/src/main/assets/graphics_driver/turnip-26.2.0.tzst",
+      "size": 2659862,
+      "sha256": "1e5bd643d64b450960ea3208cc96599a4de577f178e9ba0843b1c37083ce50d2"
+    },
+    {
+      "path": "app/src/main/assets/graphics_driver/virgl-23.1.9.tzst",
+      "size": 3481269,
+      "sha256": "614b1edc8e47c57b2cbb2d96f9c7ab5f5b1a89038de618a58b2faf9c64380e09"
+    },
+    {
+      "path": "app/src/main/assets/graphics_driver/vortek-2.1.tzst",
+      "size": 124813,
+      "sha256": "505e5089371d8698184a3722d8672628b8ef1aa0a201efa6bf1f8d6163cc08cf"
+    },
+    {
+      "path": "app/src/main/assets/graphics_driver/zink-22.2.5.tzst",
+      "size": 3874501,
+      "sha256": "b9fc365f894a4b837cfd97861972e95c680b5e744691b508f49b9a06d9e3153c"
+    },
+    {
+      "path": "app/src/main/assets/pulseaudio.tzst",
+      "size": 45548,
+      "sha256": "a31d331e1f1ec514d8287b830c1668c1d65a9b34c21010bd918eca43d2f4947f"
+    },
+    {
+      "path": "app/src/main/assets/rootfs.tzst",
+      "size": 65254618,
+      "sha256": "aeea2938cc63b0708cb2da999b5a0e3915229b6ab4eac13de061c87f34ffc1dc"
+    },
+    {
+      "path": "app/src/main/assets/rootfs_patches.tzst",
+      "size": 4174031,
+      "sha256": "49ab7a5158ef7ccff5ae96dfd539df48483454ed11c0d6788a4f95e0104c864a"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/direct3d.tzst",
+      "size": 31207067,
+      "sha256": "149d55436e050bfa3fe8caf650cb97ddb2bc9fa99cd96869bd2bc4977b708fb5"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/directmusic.tzst",
+      "size": 337109,
+      "sha256": "eb906732d14766641edfae0b2d722c36f4632de7fa321a5844037115b513b77e"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/directplay.tzst",
+      "size": 429728,
+      "sha256": "70eb81449230af66286f5b4d5922dca13057600c35d4cdfe91930e966c2386d9"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/directshow.tzst",
+      "size": 2209278,
+      "sha256": "aa682b7ee6e5903e4571bfe5a8dc9b05d0a9f05cd860cfdc810f2ddd3745e9b4"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/directsound.tzst",
+      "size": 434853,
+      "sha256": "72f0e880eef1387a55602ac02b07ef26778d23c2f70d931bd2d13e92f8dc99d4"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/vcrun2005.tzst",
+      "size": 1190943,
+      "sha256": "6ae9f3c22fecbc5dc2cee99354ff52587523663275f02bdfbf4ed36b91d2d90a"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/vcrun2010.tzst",
+      "size": 1038731,
+      "sha256": "9def7b4b5c31c839d155f05e372e0e9ce4968b57f815c1abf93b7735e7d0ceb7"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/wmdecoder.tzst",
+      "size": 1717472,
+      "sha256": "a2ca365cc43265680ee71a7b13a4626ed02368feec135571fb841c7b4abf62d1"
+    },
+    {
+      "path": "app/src/main/assets/wincomponents/xaudio.tzst",
+      "size": 2681573,
+      "sha256": "128ab3f25a74ff371d381cc0e028e8e2101f72e434ff46b85f629921ee0e2683"
+    }
+  ]
+}

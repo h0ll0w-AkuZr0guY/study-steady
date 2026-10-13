@@ -1,0 +1,25 @@
+name: Bug / 运行问题
+description: 输入、导入、存档或崩溃问题
+body:
+  - type: input
+    id: version
+    attributes: {label: Study Steady 版本}
+    validations: {required: true}
+  - type: input
+    id: device
+    attributes: {label: 设备、Android 版本、芯片}
+    validations: {required: true}
+  - type: textarea
+    id: reproduce
+    attributes: {label: 重现步骤与实际表现}
+    validations: {required: true}
+  - type: textarea
+    id: expected
+    attributes: {label: 预期结果}
+  - type: textarea
+    id: settings
+    attributes: {label: 游戏名称与运行设置, description: '填写图形驱动、DX wrapper、Box64 预设、分辨率。请勿上传游戏包、个人存档或未经检查的完整日志。'}
+  - type: textarea
+    id: logs
+    attributes: {label: 已脱敏的错误与截图}
+

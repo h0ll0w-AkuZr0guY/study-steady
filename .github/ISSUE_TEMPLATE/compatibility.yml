@@ -1,0 +1,29 @@
+name: Game compatibility / 游戏兼容性
+description: 报告已测试的 PC Galgame
+body:
+  - type: input
+    id: game
+    attributes: {label: 游戏名称、版本和引擎（如果知道）}
+    validations: {required: true}
+  - type: input
+    id: device
+    attributes: {label: 设备、Android 和 Study Steady 版本}
+    validations: {required: true}
+  - type: textarea
+    id: config
+    attributes: {label: 驱动、Box64、DX wrapper、分辨率与额外组件}
+    validations: {required: true}
+  - type: checkboxes
+    id: verified
+    attributes:
+      label: 已验证项目
+      options:
+        - label: 标题界面
+        - label: 剧情、字体与触控
+        - label: 配音、音乐与视频
+        - label: 保存、退出环境、重启后读档
+        - label: 长时间游玩
+  - type: textarea
+    id: detail
+    attributes: {label: FPS、测试时长与剩余问题, description: '请勿上传游戏文件。性能比较需相同场景与相同分辨率。'}
+

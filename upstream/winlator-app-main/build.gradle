@@ -1,0 +1,15 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        mavenCentral()
+        google()
+    }
+    dependencies { classpath 'com.android.tools.build:gradle:8.13.2' }
+}
+allprojects {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        mavenCentral()
+        google()
+    }
+}
